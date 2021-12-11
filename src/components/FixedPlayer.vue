@@ -1,17 +1,16 @@
 <template>
-  <section class="fixed mt-96 bottom-0 w-full bg-gradient-to-r from-purple-600 via-purple-800 to-blue-500 text-gray-200 p-5 rounded-md rounded-b-none" >
-      <div class="flex space-x-8 items-center">
-          <div class="flex items-center space-x-3 flex-grow-0">
+  <section :class="{'h-screen': isfullScreeen }" class="fixed transition-height transform duration-500 ease-in-out mt-96 bottom-0  w-full bg-gradient-to-r from-purple-600 via-purple-800 to-blue-500 text-gray-200 p-5 rounded-md rounded-b-none" >
+      <div v-if="isfullScreeen === false" class="flex space-x-8 items-center">
+          <div @click="toogleFullscreen" class="flex items-center space-x-3 flex-grow-0">
                 <div class="h-12 w-12 flex-shrink-0 overflow-hidden rounded bg-gray-200" >
-                    <img :src="playingSong.img" class="object-cover" >
+                    <img :src="playingSong.image_url" class="object-cover" >
                 </div>
                 <div>
-                    <p class="font-semibold text-xs">{{ playingSong.title }}</p>
-                    <p class="lg:text-xs text-xxs" >{{ playingSong.artistName }}</p>
+                    <p class="font-semibold text-xs">{{ playingSong.songTitle }}</p>
+                    <p class="lg:text-xs text-xxs" >{{ playingSong.artist }}</p>
                 </div>
           </div>
           <div class="flex space-x-4" >
-              <!-- <svg class="h-8 w-8 text-gray-200"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <polygon points="11 19 2 12 11 5 11 19" />  <polygon points="22 19 13 12 22 5 22 19" /></svg> -->
               <button @click="prevSong">
                   <svg class="h-8 w-8 text-gray-200"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <polygon points="19 20 9 12 19 4 19 20" />  <line x1="5" y1="19" x2="5" y2="5" /></svg>
               </button>
@@ -19,13 +18,13 @@
                   <svg v-if="play" class="h-8 w-8 text-gray-200"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <rect x="6" y="4" width="4" height="16" />  <rect x="14" y="4" width="4" height="16" /></svg>
                   <svg v-else class="h-8 w-8 text-gray-200"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <polygon points="5 3 19 12 5 21 5 3" /></svg>
               </button>
-              <button @click="nextSong" > 
-                  <svg class="h-8 w-8 text-gray-200"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <polygon points="5 4 15 12 5 20 5 4" />  <line x1="19" y1="5" x2="19" y2="19" /></svg>
+              <button @click="nextSong" class="z-10" > 
+                  <svg v-if="isFastForward" class="h-8 w-8 text-gray-200"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <polygon points="13 19 22 12 13 5 13 19" />  <polygon points="2 19 11 12 2 5 2 19" /></svg>
+                  <svg v-else class="h-8 w-8 text-gray-200"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <polygon points="5 4 15 12 5 20 5 4" />  <line x1="19" y1="5" x2="19" y2="19" /></svg>
               </button>
-              <!-- <svg class="h-8 w-8 text-gray-200"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <polygon points="13 19 22 12 13 5 13 19" />  <polygon points="2 19 11 12 2 5 2 19" /></svg> -->
           </div>
           <div class="hidden lg:block flex-grow mt-2" >
-              <div class="relative" >
+              <div class="relative cursor-pointer" >
                   <div class="h-1 rounded-full bg-gray-400" ></div>
                   <div :style="{width :widthSong }" class="absolute top-0 h-1 rounded-full bg-gray-200 z-10" ></div>
               </div>
@@ -53,82 +52,97 @@
             </div>
           </div>
       </div>
+      <div v-else>
+          <div class="flex-grow flex justify-end" >
+              <button @click="toogleFullscreen">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+              </button>
+          </div>
+          <div class="grid grid-cols-2 gap-4" >
+              <div>
+                    <div class="flex justify-center" >
+                         <div class="h-96 w-96 overflow-hidden rounded bg-gray-200" >
+                            <img :src="playingSong.image_url" class="object-cover" >
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-center " >
+                        <div class="text-center" >
+                            <p class="font-semibold text-base">{{ playingSong.songTitle }}</p>
+                            <p class="lg:text-xs text-xxs" >{{ playingSong.artist }}</p>
+                        </div>       
+                    </div>
+                    <div class="flex justify-center mt-4" >
+                        <div class="w-96" >
+                            <div class="relative cursor-pointer" >
+                                <div class="h-1 rounded-full bg-gray-400" ></div>
+                                <div :style="{width :widthSong }" class="absolute top-0 h-1 rounded-full bg-gray-200 z-10" ></div>
+                            </div>
+                            <div class="flex justify-between text-xs mt-2 items-center" >
+                                <p>{{ currentTime }}</p>
+                                <p>{{ duration }}</p>
+                            </div>
+                        </div>
+                    </div>  
+                    <div class="flex justify-center mt-4" >
+                         <div class="flex justify-between w-96" >
+                            <button @click="prevSong">
+                                <svg class="h-8 w-8 text-gray-200"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <polygon points="19 20 9 12 19 4 19 20" />  <line x1="5" y1="19" x2="5" y2="5" /></svg>
+                            </button>
+                            <button @click="toogleMusic" >
+                                <svg v-if="play" class="h-8 w-8 text-gray-200"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <rect x="6" y="4" width="4" height="16" />  <rect x="14" y="4" width="4" height="16" /></svg>
+                                <svg v-else class="h-8 w-8 text-gray-200"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <polygon points="5 3 19 12 5 21 5 3" /></svg>
+                            </button>
+                            <button @click="nextSong" class="z-10" > 
+                                <svg v-if="isFastForward" class="h-8 w-8 text-gray-200"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <polygon points="13 19 22 12 13 5 13 19" />  <polygon points="2 19 11 12 2 5 2 19" /></svg>
+                                <svg v-else class="h-8 w-8 text-gray-200"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <polygon points="5 4 15 12 5 20 5 4" />  <line x1="19" y1="5" x2="19" y2="19" /></svg>
+                            </button>
+                        </div>
+                    </div>                 
+              </div>
+              <div>
+                  <h1 class="font-semibold text-2xl" >Playlist</h1>
+                  <div v-for="(song, index) in songList" :key="song" class="p-3 bg-gray-800 bg-opacity-25 rounded mt-2 text-sm flex items-center space-x-2">
+                    <div @click="toogleMusic" v-if="playingSong.id == song.id" class="flex items-center" >
+                        <svg v-if="this.play == true" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                         <svg v-else xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </div>
+                    <div v-else class="flex items-center">
+                        <button @click="playnewMusic(index)" >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex items-center" >{{ song.songTitle }} - ({{ song.artist }})</div>
+                  </div>
+              </div>
+          </div>
+      </div>
   </section>
 </template>
 
 <script>
 export default {
     name:"Player",
+    props:['songList','position'],
     data(){
         return{
-            songList:[
-                {
-                    artistName:"Ckay",
-                    title:"DTF",
-                    link:"test/6941253.mp3",
-                    img:"https://i.scdn.co/image/ab67616d0000b273405fdad252857e01dbced96a"
-                },
-                 {
-                    artistName:"Ckay",
-                    title:"ah ah ah",
-                    link:"test/6941255.mp3",
-                    img:"https://i.scdn.co/image/ab67616d0000b273405fdad252857e01dbced96a"
-                },
-                {
-                    artistName:"Ckay",
-                    title:"Kakulata",
-                    link:"test/6941257.mp3",
-                    img:"https://i.scdn.co/image/ab67616d0000b273405fdad252857e01dbced96a"
-                },
-                 {
-                    artistName:"Ckay",
-                    title:"Way ft Dj Lambo",
-                    link:"test/6941259.mp3",
-                    img:"https://i.scdn.co/image/ab67616d0000b273405fdad252857e01dbced96a"
-                },
-                {
-                    artistName:"Ckay",
-                    title:"Ski Ski",
-                    link:"test/6941261.mp3",
-                    img:"https://i.scdn.co/image/ab67616d0000b273405fdad252857e01dbced96a"
-                },
-                {
-                    artistName:"Ckay",
-                    title:"Like to party",
-                    link:"test/6941265.mp3",
-                    img:"https://i.scdn.co/image/ab67616d0000b273405fdad252857e01dbced96a"
-                },
-                {
-                    artistName:"Ckay",
-                    title:"Oliver kahn ft BOJ",
-                    link:"test/6941266.mp3",
-                    img:"https://i.scdn.co/image/ab67616d0000b273405fdad252857e01dbced96a"
-                },
-                {
-                    artistName:"Ckay",
-                    title:"Beeni ft Barry Jhay",
-                    link:"test/6941269.mp3",
-                    img:"https://i.scdn.co/image/ab67616d0000b273405fdad252857e01dbced96a"
-                }
-                
-                
-            ],
             playingSong:{},
             play:false,
-            song:{}
-        }
-    },
-    computed:{
-        currentTime(){
-            console.dir(this.song);
-           return (this.song.currentTime) ? this.formatSecondToMin(this.song.currentTime) : '0.00'
-        },
-        duration(){
-            return (this.song.duration) ? this.formatSecondToMin(this.song.duration) : '0.00'
-        },
-        widthSong(){
-            let percent = ((this.song.currentTime/this.song.duration) * 100).toFixed(0)
-            return percent +'%'
+            song:{},
+            currentTime:"",
+            duration:"",
+            widthSong:"",
+            isFastForward:false,
+            isfullScreeen:false
         }
     },
     methods:{
@@ -136,20 +150,35 @@ export default {
             this.play = !this.play
             if(this.play){
                 this.song.play();
+                this.updates = setInterval(() => {
+                    this.currentTime = this.formatCurrentTime(this.song.currentTime);
+                    this.duration = this.formatCurrentTime(this.song.duration)
+                    this.widthSong = ((this.song.currentTime/this.song.duration) * 100).toFixed(7) + '%'
+                    if(this.currentTime == this.duration){
+                        this.nextSong();
+                    }
+                }, 10);
             }else{
                 this.song.pause();
+                clearInterval(this.updates);
             }
-            this.currentTime
         },
         formatSecondToMin(data){
             return (data/60).toFixed(2);
         },
+        formatCurrentTime(seconds){
+            let minutes = Math.floor(seconds / 60);
+            minutes = (minutes >= 10) ? minutes : minutes;
+            seconds = Math.floor(seconds % 60);
+            seconds = (seconds >= 10) ? seconds : "0" + seconds;
+            return minutes + ":" + seconds;
+        },
         loadMusic(){
-            this.song = new Audio(this.playingSong.link);
-
+            this.currentTime = this.duration = "0.00"; 
+            this.song = new Audio(this.playingSong.url);    
         },
         nextSong(){
-            let currsong = this.songList.find(item => item.link == this.playingSong.link)
+            let currsong = this.songList.find(item => item.url == this.playingSong.url)
             let nextsong = this.songList.indexOf(currsong) + 1
             if(this.songList.length > nextsong ){
                 this.playingSong = this.songList[nextsong]
@@ -165,7 +194,7 @@ export default {
            
         },
         prevSong(){
-            let currsong = this.songList.find(item => item.link == this.playingSong.link)
+            let currsong = this.songList.find(item => item.url == this.playingSong.url)
             let prevsong = this.songList.indexOf(currsong) - 1
             if(prevsong >= 0  ){
                 this.playingSong = this.songList[prevsong]
@@ -179,11 +208,54 @@ export default {
             this.loadMusic();
             this.toogleMusic();
 
+        },
+        fastForward(){           
+            setTimeout(() => {
+                this.isFastForward = true;
+                this.song.currentTime += 10
+            }, 1000);   
+        },
+        stopFastForward(){
+            this.isFastForward = false;
+        },
+        toogleFullscreen(){
+            this.isfullScreeen = !this.isfullScreeen
+        },
+        playnewMusic(position){
+            this.playingSong = this.songList[position];
+            if(this.play){
+                this.toogleMusic();
+            }
+            this.loadMusic();
+            this.toogleMusic();
+        },
+        increaseVolume(){
+            this.song.volume = this.song.volume + 0.1
+        },
+        decreaseVolume(){
+            this.song.volume = this.song.volume - 0.1
+        }
+    },
+    created(){
+        let self = this
+        document.body.onkeyup = function(e){ 
+            if(e.keyCode == 32 || this.playingSong){   
+                self.toogleMusic();
+            }else if(e.keyCode == 78 || this.playingSong){
+                self.nextSong()
+            }else if(e.keyCode == 80 || this.playingSong){
+                self.prevSong()
+            }else if(e.keyCode == 187){
+                self.increaseVolume()
+            }else if(e.keyCode == 189){
+                self.decreaseVolume()
+            }
         }
     },
     mounted(){
-        this.playingSong = this.songList[0];
-        this.loadMusic()
+        this.playingSong = this.songList[this.position];
+        this.loadMusic();
+        this.toogleMusic();
     },
 
 }

@@ -1,8 +1,8 @@
 <template>
   <Header/>
-    <Latest/>
+    <Latest @pickedList="playList" />
     <Userpicks/>
-  <FixedPlayer/>
+  <FixedPlayer v-if="songList.length" :songList="songList" :position="position" />
 </template>
 
 <script>
@@ -14,6 +14,19 @@ export default {
   name: 'Home',
   components: {
     FixedPlayer,Header,Latest,Userpicks
+  },
+  data(){
+    return {
+      songList:[],
+      position:""
+    }
+  },
+  methods:{
+      playList(data){
+        console.log(data);
+        this.songList = data.songList;
+        this.position = data.position
+      },
   }
 }
 </script>

@@ -2,3 +2,12 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.full-height {
+  @apply transition duration-500 transform translate-y-full  h-screen ease-in;
+}
+.delay{
+    transition-property: height;
+    transition-duration: 5s;
+    transition-delay: 2s;
+}

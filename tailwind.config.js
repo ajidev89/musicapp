@@ -8,7 +8,10 @@ module.exports = {
       },
       fontSize: {
         'xxs': '.7rem'
-      }
+      },
+      transitionProperty: {
+         'height': 'height',
+        }
     },
   },
   variants: {
