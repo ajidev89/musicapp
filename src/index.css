@@ -11,3 +11,7 @@
     transition-duration: 5s;
     transition-delay: 2s;
 }
+
+.input-fieldset{
+  @apply border rounded py-1 px-3;
+}

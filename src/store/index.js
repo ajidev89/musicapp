@@ -2,7 +2,7 @@ import { createStore } from 'vuex'
 
 export default createStore({
   state: {
-     base_url:"http://127.0.0.1:8000/api/"
+     base_url:"https://streamx-backend.herokuapp.com/api/"
   },
   mutations: {
   },
