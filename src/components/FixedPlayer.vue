@@ -1,13 +1,13 @@
 <template>
-  <section :class="{'h-screen': isfullScreeen }" class="fixed transition-height transform duration-500 ease-in-out mt-96 bottom-0  w-full bg-gradient-to-r from-purple-600 via-purple-800 to-blue-500 text-gray-200 p-5 rounded-md rounded-b-none" >
-      <div v-if="isfullScreeen === false" class="flex space-x-8 items-center">
+  <section :class="{'h-screen flex items-center justify-center ': isfullScreeen }" class="fixed transition-height transform duration-500 ease-in-out mt-96 bottom-0  w-full bg-gradient-to-r from-purple-600 via-purple-800 to-blue-500 text-gray-200 p-5 rounded-md rounded-b-none" >
+      <div v-if="isfullScreeen === false" class="flex lg:space-x-8 justify-between items-center">
           <div @click="toogleFullscreen" class="flex items-center space-x-3 flex-grow-0">
                 <div class="h-12 w-12 flex-shrink-0 overflow-hidden rounded bg-gray-200" >
                     <img :src="playingSong.image_url" class="object-cover" >
                 </div>
                 <div>
                     <p class="font-semibold text-xs">{{ playingSong.songTitle }}</p>
-                    <p class="lg:text-xs text-xxs" >{{ playingSong.artist }}</p>
+                    <p class="lg:text-xs text-xxs" >{{ playingSong.artist.artistName }}</p>
                 </div>
           </div>
           <div class="flex space-x-4" >
@@ -53,28 +53,28 @@
           </div>
       </div>
       <div v-else>
-          <div class="flex-grow flex justify-end" >
+          <div class="flex-grow flex justify-end fixed top-4 right-4" >
               <button @click="toogleFullscreen">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
               </button>
           </div>
-          <div class="grid grid-cols-2 gap-4" >
+          <div class="grid grid-cols-1 lg:grid-cols-2  lg:gap-4" >
               <div>
                     <div class="flex justify-center" >
-                         <div class="h-96 w-96 overflow-hidden rounded bg-gray-200" >
+                         <div class="lg:h-96 lg:w-96 h-72 w-72 overflow-hidden rounded bg-gray-200" >
                             <img :src="playingSong.image_url" class="object-cover" >
                         </div>
                     </div>
                     <div class="mt-4 flex justify-center " >
                         <div class="text-center" >
                             <p class="font-semibold text-base">{{ playingSong.songTitle }}</p>
-                            <p class="lg:text-xs text-xxs" >{{ playingSong.artist }}</p>
+                            <p class="lg:text-xs text-xxs" >{{ playingSong.artist.artistName }}</p>
                         </div>       
                     </div>
                     <div class="flex justify-center mt-4" >
-                        <div class="w-96" >
+                        <div class="lg:w-96 w-72" >
                             <div class="relative cursor-pointer" >
                                 <div class="h-1 rounded-full bg-gray-400" ></div>
                                 <div :style="{width :widthSong }" class="absolute top-0 h-1 rounded-full bg-gray-200 z-10" ></div>
@@ -86,7 +86,7 @@
                         </div>
                     </div>  
                     <div class="flex justify-center mt-4" >
-                         <div class="flex justify-between w-96" >
+                         <div class="flex justify-between lg:w-96 w-72" >
                             <button @click="prevSong">
                                 <svg class="h-8 w-8 text-gray-200"  viewBox="0 0 24 24"  fill="none"  stroke="currentColor"  stroke-width="2"  stroke-linecap="round"  stroke-linejoin="round">  <polygon points="19 20 9 12 19 4 19 20" />  <line x1="5" y1="19" x2="5" y2="5" /></svg>
                             </button>
@@ -101,7 +101,7 @@
                         </div>
                     </div>                 
               </div>
-              <div>
+              <div class="hidden lg:block" >
                   <h1 class="font-semibold text-2xl" >Playlist</h1>
                   <div v-for="(song, index) in songList" :key="song" class="p-3 bg-gray-800 bg-opacity-25 rounded mt-2 text-sm flex items-center space-x-2">
                     <div @click="toogleMusic" v-if="playingSong.id == song.id" class="flex items-center" >
@@ -121,7 +121,11 @@
                             </svg>
                         </button>
                     </div>
-                    <div class="flex items-center" >{{ song.songTitle }} - ({{ song.artist }})</div>
+                    <div class="flex items-center" >{{ song.songTitle }}
+                        <span class="ml-1" v-if="song.featured_artists.length" >
+                            ft <span v-for="featArtist in song.featured_artists" :key="featArtist" >{{ featArtist.artistName }}</span>
+                        </span>
+                    </div>
                   </div>
               </div>
           </div>
@@ -252,8 +256,10 @@ export default {
             }
         }
     },
-    mounted(){
+    beforeMount(){
         this.playingSong = this.songList[this.position];
+    },
+    mounted(){
         this.loadMusic();
         this.toogleMusic();
     },
